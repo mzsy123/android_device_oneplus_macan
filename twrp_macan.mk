@@ -33,7 +33,7 @@ $(call inherit-product, device/oneplus/macan/device.mk)
 PRODUCT_DEVICE := macan
 PRODUCT_NAME := twrp_macan
 PRODUCT_BRAND := oneplus
-PRODUCT_MODEL := OnePlus 15R
+PRODUCT_MODEL := OnePlus Ace 6T
 PRODUCT_MANUFACTURER := oneplus
 
 PRODUCT_GMS_CLIENTID_BASE := android-oplus
