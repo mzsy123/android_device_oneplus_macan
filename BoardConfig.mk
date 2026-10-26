@@ -7,11 +7,9 @@
 # Copyright (C) 2024-2025 The OrangeFox Recovery Project
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
-# 适配 TWRP-Test/twrp-16.0（YARP GUI2）版
 
 DEVICE_PATH := device/oneplus/macan
 
-# For building with minimal manifest
 ALLOW_MISSING_DEPENDENCIES := true
 BUILD_BROKEN_DUP_RULES := true
 BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES := true
@@ -32,7 +30,6 @@ ENABLE_SCHEDBOOST := true
 
 # Bootloader
 PRODUCT_PLATFORM := canoe
-# [改] PRODUCT_RELEASE_NAME 在本树未定义，填设备代号，避免 ro.bootloader 断言为空
 TARGET_BOOTLOADER_BOARD_NAME := macan
 TARGET_NO_BOOTLOADER := true
 
@@ -47,7 +44,7 @@ TARGET_KERNEL_HEADER_ARCH     := arm64
 BOARD_KERNEL_IMAGE_NAME       := Image
 BOARD_BOOT_HEADER_VERSION     := 4
 BOARD_KERNEL_PAGESIZE         := 4096
-# [改] 内核放入设备树 prebuilt/kernel，不再依赖 OrangeFox sync 的 kernel/prebuilts 路径
+# 内核由构建脚本自动 clone 到 macan-kernel，构建时引用
 TARGET_PREBUILT_KERNEL        := device/oneplus/macan-kernel/images/kernel
 BOARD_MKBOOTIMG_ARGS          += --header_version $(BOARD_BOOT_HEADER_VERSION)
 BOARD_MKBOOTIMG_ARGS          += --pagesize $(BOARD_KERNEL_PAGESIZE)
@@ -68,41 +65,25 @@ AB_OTA_PARTITIONS := \
     system_dlkm \
     vbmeta \
     vbmeta_system \
-	vbmeta_vendor \
+    vbmeta_vendor \
     vendor \
     vendor_dlkm
-
-# AB partitions for oplus
-AB_OTA_PARTITIONS += \
-    my_bigball \
-    my_carrier \
-    my_company \
-    my_engineering \
-    my_heytap \
-    my_manifest \
-    my_preload \
-    my_product \
-    my_region \
-    my_stock \
-    system_dlkm_oki
 
 # Verified Boot
 BOARD_AVB_ENABLE := true
 
 # Partitions
 BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := true
-# [TODO] 用实测值替换：adb shell su -c 'blockdev --getsize64 /dev/block/by-name/recovery_a'
+# 刷机前用真机实测：blockdev --getsize64 /dev/block/by-name/recovery_a
 BOARD_RECOVERYIMAGE_PARTITION_SIZE := 104857600
 
 # Dynamic Partition
-# [TODO] 用实测值替换：adb shell su -c 'blockdev --getsize64 /dev/block/by-name/super'
+# 刷机前用真机实测：blockdev --getsize64 /dev/block/by-name/super
 BOARD_SUPER_PARTITION_SIZE := 16886267904
 BOARD_SUPER_PARTITION_GROUPS := qti_dynamic_partitions
-BOARD_QTI_DYNAMIC_PARTITIONS_SIZE := 16227762176
+BOARD_QTI_DYNAMIC_PARTITIONS_SIZE := $(shell echo $$(($(BOARD_SUPER_PARTITION_SIZE) - 4194304)))
 BOARD_QTI_DYNAMIC_PARTITIONS_PARTITION_LIST := \
-	system system_ext product vendor vendor_dlkm odm
-BOARD_QTI_DYNAMIC_PARTITIONS_PARTITION_LIST += \
-	my_bigball my_carrier my_company my_engineering my_heytap my_manifest my_preload my_product my_region my_stock system_dlkm_oki
+    system system_ext product vendor vendor_dlkm odm
 
 BOARD_PARTITION_LIST := $(call to-upper, $(BOARD_QTI_DYNAMIC_PARTITIONS_PARTITION_LIST))
 $(foreach p, $(BOARD_PARTITION_LIST), $(eval BOARD_$(p)IMAGE_FILE_SYSTEM_TYPE := erofs))
@@ -134,7 +115,6 @@ TW_INCLUDE_LPDUMP := true
 TW_INCLUDE_LPTOOLS := true
 TW_INCLUDE_REPACKTOOLS := true
 TW_INCLUDE_RESETPROP := true
-# [加] 提升 zip / 镜像兼容性
 TW_INCLUDE_7ZA := true
 TW_INCLUDE_ZSTD := true
 TW_ENABLE_ALL_PARTITION_TOOLS := true
@@ -172,7 +152,6 @@ PLATFORM_VERSION_LAST_STABLE := $(PLATFORM_VERSION)
 PLATFORM_SECURITY_PATCH := 2099-12-31
 VENDOR_SECURITY_PATCH := $(PLATFORM_SECURITY_PATCH)
 BOOT_SECURITY_PATCH := $(PLATFORM_SECURITY_PATCH)
-# [改] 显示名改回 Ace 6T
 TW_DEVICE_VERSION := OnePlus_Ace_6T
 
 # Vibrator
@@ -180,12 +159,11 @@ TW_SUPPORT_INPUT_AIDL_HAPTICS := true
 
 # Other TWRP Configurations
 TARGET_RECOVERY_QCOM_RTC_FIX := true
-TW_CUSTOM_CPU_TEMP_PATH := "/sys/class/thermal/thermal_zone45/temp" # CPU-0-0-0
+TW_CUSTOM_CPU_TEMP_PATH := "/sys/class/thermal/thermal_zone45/temp"
 TW_EXCLUDE_APEX := true
 TW_EXCLUDE_DEFAULT_USB_INIT := true
 TW_DEFAULT_LANGUAGE := en
 TW_EXTRA_LANGUAGES := true
-# [保留] 一加触摸/显示/充电模块，与 vendor_dlkm 的 modules.load.recovery 保持对应
 TW_LOAD_VENDOR_MODULES := "oplus_bsp_synaptics_tcm2.ko oplus_bsp_tp_common.ko oplus_bsp_tp_custom.ko oplus_bsp_tp_focal_common.ko oplus_bsp_tp_ft3518.ko oplus_bsp_tp_ft3658u_spi.ko oplus_bsp_tp_ft3681.ko oplus_bsp_tp_ft3683g.ko oplus_bsp_tp_ft8057p.ko oplus_bsp_tp_goodix_comnon.ko oplus_bsp_tp_gt9916.ko oplus_bsp_tp_gt9966.ko oplus_bsp_tp_ilitek7807s.ko oplus_bsp_tp_ilitek_common.ko oplus_bsp_tp_notify.ko oplus_bsp_tp_novatek_common.ko oplus_bsp_tp_nt36528_noflash.ko oplus_bsp_tp_nt36532_noflash.ko oplus_bsp_tp_nt36672c_noflash.ko oplus_bsp_tp_syna_common.ko oplus_bsp_tp_tcm_S3908.ko oplus_bsp_tp_tcm_S3910.ko oplus_bsp_tp_td4377_noflash.ko q6_pdr_dlkm.ko q6_notifier_dlkm.ko snd_event_dlkm.ko gpr_dlkm.ko spf_core_dlkm.ko adsp_loader_dlkm.ko oplus_chg_v2.ko stm_st54se_gpio.ko nxp-nci.ko"
 TW_LOAD_VENDOR_MODULES_EXCLUDE_GKI := true
 TW_USE_SERIALNO_PROPERTY_FOR_DEVICE_ID := true
@@ -195,7 +173,6 @@ TW_INPUT_BLACKLIST := "hbtp_vm"
 # se_omapi
 TW_INCLUDE_OMAPI := true
 
-# [保留] 解密相关：keystore2 版本对 A16 敏感，若解密失败先检查这里
 BOARD_RECOVERY_IMAGE_PREPARE += \
 cp -f $(DEVICE_PATH)/recovery/root/vendor/bin/keystore2_v36 $(TARGET_RECOVERY_ROOT_OUT)/system/bin/keystore2; \
 cp -f $(DEVICE_PATH)/recovery/root/vendor/lib64/libc++_v36.so $(TARGET_RECOVERY_ROOT_OUT)/system/lib64/libc++_v36.so;
