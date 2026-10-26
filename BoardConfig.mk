@@ -154,7 +154,7 @@ TW_FRAMERATE := 120
 TW_MAX_BRIGHTNESS := 4094
 TW_NO_SCREEN_BLANK := true
 TW_SCREEN_BLANK_ON_BOOT := true
-# [删] TW_THEME 与 ui.xml 在 YARP(GUI2) 下不生效，已移除
+TW_THEME := portrait_hdpi
 TARGET_USES_VULKAN := true
 
 # TWRP file system
