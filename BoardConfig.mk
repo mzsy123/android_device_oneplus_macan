@@ -48,7 +48,7 @@ BOARD_KERNEL_IMAGE_NAME       := Image
 BOARD_BOOT_HEADER_VERSION     := 4
 BOARD_KERNEL_PAGESIZE         := 4096
 # [改] 内核放入设备树 prebuilt/kernel，不再依赖 OrangeFox sync 的 kernel/prebuilts 路径
-TARGET_PREBUILT_KERNEL        := $(DEVICE_PATH)/prebuilt/kernel
+TARGET_PREBUILT_KERNEL        := device/oneplus/macan-kernel/images/kernel
 BOARD_MKBOOTIMG_ARGS          += --header_version $(BOARD_BOOT_HEADER_VERSION)
 BOARD_MKBOOTIMG_ARGS          += --pagesize $(BOARD_KERNEL_PAGESIZE)
 
