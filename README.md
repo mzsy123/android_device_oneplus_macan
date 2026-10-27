@@ -1,5 +1,3 @@
-## 2. `android_device_oneplus_macan` 的 README.md
-
 # TWRP device tree for OnePlus Ace 6T (macan)
 
 OnePlus Ace 6T / OnePlus 15R（代号 macan）的 TWRP 设备树，配套 [yarp-macan](https://github.com/mzsy123/yarp-macan) 脚手架，用于构建 TWRP-Test `twrp-16.0`（YARP GUI2）recovery。
